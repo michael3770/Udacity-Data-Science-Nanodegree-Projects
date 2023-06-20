@@ -43,7 +43,7 @@ def load_data(database_filepath):
              y -> dataframe with labels
              category_names -> list of category names
     '''
-    engine = create_engine('sqlite:///InsertDatabaseName.db')
+    engine = create_engine('sqlite:///' + database_filepath)
     df = pd.read_sql_table('disaster_message', engine)
     X = df['message']
     y = df.iloc[:, 4:]
@@ -82,8 +82,36 @@ def build_model():
     ('tfidf', TfidfTransformer()),
     ('clf', MultiOutputClassifier(AdaBoostClassifier()))
     ])
+    
+    return pipeline
 
+# for some reason classification_report does not work in multioutput multilabel, use the function below to get metrics
 
+def get_scores(y_true, y_pred):
+    '''
+    input :vector from dataset (y_train, y_test)
+           predicted vector from model (y_train_pred, y_test_pred)
+    output: Precision, Recall and F1 score in a dict
+    '''
+    accuracy = accuracy_score(y_true, y_pred)
+    precision = precision_score(y_true, y_pred, average='micro')
+    recall = recall_score(y_true, y_pred, average='micro')
+    f1 = 2 * precision * recall / (precision + recall)
+    return {'Accuracy': accuracy, 'Precision': precision, 'Recall': recall, 'f1_score': f1}
+
+def get_score_df(y_true, y_pred):
+    '''
+    input: Trainig/test matrix,
+           predicted matrix
+    output: metrics dataframe
+    '''
+    score = []
+    for i in range(len(y_true.columns)):
+        current_score = get_scores(y_true.iloc[:, i], y_pred[:, i])
+        score.append(current_score)
+    score_df = pd.DataFrame(score)
+    score_df.index = y_true.columns
+    return score_df
 
 def evaluate_model(model, X_test, Y_test, category_names):
     '''
@@ -100,9 +128,10 @@ def evaluate_model(model, X_test, Y_test, category_names):
     '''
     Y_test_pred = model.predict(X_test)
 
-    # Since no plotting/visualization needed here, the built function classification_report can be used
-
-    print(classification_report(Y_test.values,Y_pred_test, target_names=category_names))
+    df = get_score_df(Y_test, Y_test_pred)
+    
+    for column in category_names:
+        print(df.loc[column, :])
 
 
 
