@@ -1,16 +1,76 @@
+'''
+Project Name: Disaster response pipeline - part of Udacity's Nanodegree Program
+
+This module can be used to load, extract, and transform data to prepare for the next module
+
+Args: message_filepath = file location of the CSV file containing messages
+      categories_file_path = file location of the CSV file containing message categories
+      database_filepath = file location of the sql database storage file
+'''
+
 import sys
+import numpy as np
+import pandas as pd
+from sqlalchemy import create_engine
 
 
 def load_data(messages_filepath, categories_filepath):
-    pass
+    '''
+    input - file path to the message and category file
+    output - combined DataFrame containing both messages and categories
+    '''
+    messages = pd.read_csv(messages_filepath)
+    categories = pd.read_csv(categories_filepath)
+    df = pd.merge(messages, categories, on='id')
+    return df
 
 
 def clean_data(df):
-    pass
+    '''
+    input - dataframe from load_data
+    output - dataframe with category splitted in to columns and values filled
+    '''
+    # Splitting the categories string
+    categories = df['categories'].str.split(pat=';', expand=True)
 
+    # Renaming categories column names
+    row = categories.iloc[0, :]
+
+    # use this row to extract a list of new column names for categories.
+    # one way is to apply a lambda function that takes everything 
+    # up to the second to last character of each string with slicing
+    category_colnames = [s[:-2] for s in row]
+    categories.columns = category_colnames
+
+    # Setting category value to numbers
+    for column in categories:
+
+        # set each value to be the last character of the string
+        categories[column] = categories[column].apply(lambda s:s[-1])
+    
+        # convert column from string to numeric
+        categories[column] = categories[column].astype(int)
+    
+    # replacing df categories columns with new category columns
+    df.drop(labels=['categories'], axis=1, inplace=True)
+    df = pd.concat([df, categories], axis=1)
+
+    # Removing duplicates
+
+    df.drop_duplicates(inplace=True)
+
+    return df
 
 def save_data(df, database_filename):
-    pass  
+    '''
+    Saving df to database file 
+    input: df - processed dataframe
+           database_filename - database file name and location
+    '''
+    engine = create_engine('sqlite:///' + database_filename)
+    df.to_sql('disaster_message', engine, index=False, if_exists='replace')
+
+      
 
 
 def main():
