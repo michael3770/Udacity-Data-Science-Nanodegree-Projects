@@ -82,8 +82,16 @@ def build_model():
     ('tfidf', TfidfTransformer()),
     ('clf', MultiOutputClassifier(AdaBoostClassifier()))
     ])
+
+    parameters = {
+      'clf__estimator__algorithm': ['SAMME', 'SAMME.R'],
+      'clf__estimator__n_estimators': [25, 50, 75]
+    }
+    # use a custom scorer with f1_score
+    score = make_scorer(multi_f1)
+    cv = GridSearchCV(pipeline, param_grid=parameters, scoring=score, verbose=10)
     
-    return pipeline
+    return cv
 
 # for some reason classification_report does not work in multioutput multilabel, use the function below to get metrics
 
@@ -112,6 +120,16 @@ def get_score_df(y_true, y_pred):
     score_df = pd.DataFrame(score)
     score_df.index = y_true.columns
     return score_df
+
+
+def multi_f1(y_true, y_pred):
+    '''
+    custom scoring matrics based on f1_score
+    input - true matrix, prediction matrix
+    output - average f1_score 
+    '''
+    score_df = get_score_df(y_true, y_pred)
+    return np.mean(score_df['f1_score'])
 
 def evaluate_model(model, X_test, Y_test, category_names):
     '''

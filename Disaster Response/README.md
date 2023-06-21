@@ -8,6 +8,8 @@ In this project, a disaster response dataset was provided by [Figure Eight](http
 
 This project aims to build a machine learning model that can take messages and classify them into different categories. The model is then rendered by flask to provide a web GUI - this part is provided by Udacity.
 
+The project is hosted i
+
 ## Folder descriptions
 
 ### app
@@ -23,7 +25,21 @@ process_data.py - script containing ETL pipelines to load, merge, extract, clean
 train_classifier.py - script containing ML pipeline to load the cleaned data, and building a ML model (AdaBoostClassifer() in this case), and store the model using pickle
 
 
-### Instructions:
+## Installation instructions
+## Dependencies
+- Python3
+- Machine Learning packages: Numpy, Scikit-Learn, pickle
+- Language processing pakcages: NLTK
+- Visualizaton and web rendering: matplotilb, flask
+
+It's recommended to use conda to manage python packages and dependencies
+
+## Install
+
+Download [this repository](https://github.com/michael3770/Udacity-Data-Science-Nanodegree-Projects/tree/main/Disaster%20Response) with git
+
+
+## Running instructions:
 
 Install the required dependencies, and follow the steps below 
 

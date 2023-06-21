@@ -24,6 +24,17 @@ def load_data(messages_filepath, categories_filepath):
     df = pd.merge(messages, categories, on='id')
     return df
 
+def convert(text):
+    '''
+    input - category text strings 
+    output - category values 0 or 1
+    '''
+
+    cat = int(text[-1])
+    cat = np.ceil(cat / 2)
+    return int(cat)
+
+
 
 def clean_data(df):
     '''
@@ -44,12 +55,7 @@ def clean_data(df):
 
     # Setting category value to numbers
     for column in categories:
-
-        # set each value to be the last character of the string
-        categories[column] = categories[column].apply(lambda s:s[-1])
-    
-        # convert column from string to numeric
-        categories[column] = categories[column].astype(int)
+        categories[column] = categories[column].apply(convert)
     
     # replacing df categories columns with new category columns
     df.drop(labels=['categories'], axis=1, inplace=True)
