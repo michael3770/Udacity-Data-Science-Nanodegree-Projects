@@ -39,11 +39,11 @@ The stripplot for each individual feature can help us better understand the dist
 ![striprainfall](./images/striprf.png)
 
 
-Next we want to ask are there inherently any connection between the columns? The heatmap is a handy tool to visualize the correlation between the variables. 
+As show in above, most crops falls in a relative short range of values, with only a few exceptions, like grape/temperature, rice/rainfall, groundnuts/ph. Next we want to ask are there inherently any connection between the columns? The heatmap is a handy tool to visualize the correlation between the variables. 
 
 ![heatmap](./images/heatmap.png)
 
-It's apparent that each column are individual variables without a lot of interactions. However, the humidity data could be related to rainfall and the trend is not observed in the dataset.
+It's apparent that each column are individual variables without a lot of interactions with the exception betweek potassium and phosphors, maybe they are generally applied in the same compond fertilizer package. However, the humidity data could be related to rainfall and the trend is not observed in the dataset.
 
 ## Building models for crop prediction
 
