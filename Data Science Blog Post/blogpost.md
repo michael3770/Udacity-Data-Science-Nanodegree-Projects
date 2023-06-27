@@ -12,6 +12,7 @@ Now the next questions is what crop to grow? Clearly plants have different prefe
 With this dataset, we are trying to answer several questions - 
 
 - What are the most critical nutrients for a specific plant
+- What the best models to make predictions this data set
 - Given the measurement of a specific soil, what is the most recommended crop?
 
 
