@@ -307,6 +307,6 @@ Predicted breed American_water_spaniel
 
 Link to my project [repository](https://github.com/michael3770/Udacity-Data-Science-Nanodegree-Projects/tree/main/dog-project).
 
-Link to Udacity's project [repository]((https://github.com/udacity/dog-project)). 
+Link to Udacity's project [repository](https://github.com/udacity/dog-project). 
 
 
