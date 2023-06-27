@@ -9,6 +9,11 @@ There's no doubt tha COVID-19 brought a lot of disruption to the day to day life
 
 Now the next questions is what crop to grow? Clearly plants have different preferred growing conditions and this is where we can get some help from data science. In this blog, we will use the crop recommendation dataset from [harvard dataverse](https://dataverse.harvard.edu/dataset.xhtml?persistentId=doi:10.7910/DVN/4GBWFV) to help us select the most appropriate crop in the backyard. 
 
+With this dataset, we are trying to answer several questions - 
+
+- What are the most critical nutrients for a specific plant
+- Given the measurement of a specific soil, what is the most recommended crop?
+
 
 ## Exploratory Data analysis
 
