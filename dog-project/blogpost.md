@@ -1,6 +1,6 @@
 # Dog Breed Prediction Classifier  
 
-*This is a capstone project of Udacity's Data Scientist Nanodegree program*
+*This is a capstone project of Udacity's Data Scientist Nanodegree program. The project is hosted on my [github](https://github.com/michael3770/Udacity-Data-Science-Nanodegree-Projects/tree/main/dog-project).* 
   
 ## 1. Introduction
 
@@ -19,6 +19,24 @@ Based on the flow, there are several modules we need to take care of
 - Human Face Detector - for detecting if the image contains a human face
 - Dog Detector - for detecting if the image contains a dog
 - Dog Breed Predictor - for predicting the breed of the dog found in the image
+
+#### **A Peek at the dataset**
+
+The image set provided for this project is located in the \data folder repository. The dog image set is split into training, validation, and test set with a 80:10:10 ratio as shown in the graph below. Each set contains images for all 133 dog breeds.
+
+```mermaid
+pie
+    "Train" : 6680
+    "Valid" : 836
+    "Test" : 835
+```
+
+The breed distribution within each set is roughly distributed equally, as we can see the from the following visualization (raw image can be zoomed or found in the project repository).
+
+![Breed distribution](./blog_pics/breed_plot.png)
+
+
+In addition, there are 13233 human images in the /data/lfw folder as well. 
 
 
 
@@ -72,7 +90,7 @@ The output of the code snippet has returned 1 face count. The output over-layed 
 
 For the dog face detector, we rely in a pre-trained model named Resnet-50. Resnet-50 is a 50-layer deep neural network model comprised of 48 convolution layer, 1 maxpool and 1 average pool layer. It has been trained on over a million images and can put the image into 1000 categories. The detailed network architecture of Resnet-50 can be seen [here](https://ethereon.github.io/netscope/#/gist/db945b393d40bfa26006).
 
-**Data Processing for Neural Network models**
+#### **Data Processing for Neural Network models**
 
 It is a bit more involved to use the pre-trained Resnet-50 model compared to the HaarCascade model. Based on the instruction outlined in the notebook, the steps for image processing include
 - Convert images into a square shape with 224 pixels by 224 pixels
@@ -147,6 +165,47 @@ Non-trainable params: 0
 For activation functions, each convolution layer used relu function for computational simplicity, while the last dense layer used softmax function to calculate the probability of the sample falling into each category.
 
 In order to compile the model, rmsprop is used as the optimizer, and categorical cross-entropy is used as the loss function. In order to test the impact on training epochs, 5, 10, 20 epochs are selected and their accuracy is listed in the following graph.
+
+### Explanation of the activation function, loss function, and metrics used in the model
+
+#### **Activation function**
+Categorical cross-entropy is used as the loss function as it is suitable for the softmax function. If we look at the softmax function, 
+
+$$ 
+\sigma(\vec z_i) = \frac{e^z_i}{\sum_{j=1}^{K}e^z_j}
+$$
+
+For each input vector $\vec z_i$, it provides an output vector which contains possibility for it to fall onto each category. 
+
+#### **Loss function**
+
+For a simplified description of the loss function, we can consider a two class case C1 and C2. The loss function can be expressed as the following
+
+$$
+Cross Entropy = -t_1log(s_1) - (1-t_1)log(1-s_1)
+$$
+
+where t1, s1 is the groundtruth and score for C1, and naturally 1-t1 and 1-s1 is the groundtruth for C2. In the extreme case, if the truth is t1=1 and predicted score is s1=1, the calculated cross entropy is 0, while if t1=1 but s1=0, the cross entropy would be infinite. To improve the accuracy of the prediction, the goal of the training process is to minimize the cross entropy loss function.
+
+#### **Evaluation Metrics**
+
+There are several measures of the performance of a classification result, including accuracy, precision, recall, and f1_score. To put it in mathematical terms, we can put the prediction into 4 types - True Positive, True Negative, False Positive, and False Negatives. 
+
+$$
+Accuracy = \frac{TP + TN}{TP + TN + FP + FN}
+$$
+$$  
+Precision = \frac{TP}{TP + FP}
+$$
+$$  
+Recall = \frac{TP}{TP + FN}  
+$$
+$$
+F1_score = \frac{2 * Precision * Recall}{Precision + Recall}
+$$
+
+Typically f1 score is very commonly used in classification tasks to reach a balance between precision and recall. But given the scope of the project is relatively simple and proof-of-concept, accuracy will be used as the evaluation metric. 
+
 
 | Epochs    |  Accuracy  |
 |:---       |    --:     |
@@ -239,6 +298,7 @@ After compiling the model using rmsprop optimizer and cross categorical entropy 
 
 As we can see, Resnet-50 based transfer learning model give prediction results with higher accuracy and it will be saved and used in the prediction tasks in the following sections.
 
+
 ## 7. Implement an algorithm and test the algorithm on sample images
 
 The implementation of the algorithm for sample image classification is relatively straightforward once the previous steps are finished. Here, the image is first rendered in the cell, the fed through a series of detectors shown in the introduction section. 
@@ -303,10 +363,60 @@ Predicted breed American_water_spaniel
     - Training size in this case has less than 7000 images. More training images, higher resolution images, and data augmentation techniques can be used to improve model accuracy
     - Traing more epochs. Due to time and resrouce constraints, the models in section 5 were only trained with 20 epochs. But as seen in section 4, the models does not seems to be converged at this point and more training epochs can lead to lower loss and higher accuracy. 
 
-## 9. References
+#### **Comparison between VGG-16, VGG-19, Resnet-50**
 
-Link to my project [repository](https://github.com/michael3770/Udacity-Data-Science-Nanodegree-Projects/tree/main/dog-project).
+Let's compare the neural network structures to get some insights on the different performance from the pre-trained models. For VGG-16 and VGG-19, their network structures are very similar, and they contain 16 and 19 layers with weights. Here's a sample illustration of network structures. [Reference](https://datahacker.rs/deep-learning-vgg-16-vs-vgg-19/)
 
-Link to Udacity's project [repository](https://github.com/udacity/dog-project). 
+![VGG](./blog_pics/VGG_structure.png)
+
+Since VGG-19 has more layers with weights compared to VGG-16, it is expected it would outperform VGG-16 (before converge).
+
+If we look at the Resnet-50, it uses a network with much more complicated structure based on the residual concept, where the a residual mapping F(x) + x is fitted for every few layers instead of fitting the direct mapping F(x). In this way it has some advantages over "plain" neural networks like VGG. See [here](https://medium.com/@aschandinip/resnet-34-50-101-what-actually-it-is-c63da24ba695) and [here](https://viso.ai/deep-learning/resnet-residual-neural-network/) for more information. The image below is a comparison of VGG, 34 layer plain and 34 layer residual neural network.
+
+![Residual Layer](./blog_pics/residual_mapping.webp)
+![VGG vs Res](./blog_pics/vgg_vs_res.webp)
 
 
+However, we also need to keep in mind that training neural networks gets very computational intensive as the networks get deeper, so there's always a trade off between the model complexity and computational resources/time, and the models cannot grow indefinitely. 
+
+## 9. Implementation details/challenges
+
+There has been some issues in implementation details that I spent some time figuring out, for example,
+- glob import issue
+
+The [glob](https://docs.python.org/3/library/glob.html) package actually contains a function glob, to use glob() directly it has to be imported like this
+```python 
+from glob import glob
+```
+instead of 
+```python
+import glob
+```
+
+- image module import issue
+  
+ In the last algorithm implementation, I got the paths of the test images, and used a loop to test each individual image like the following
+```python
+image_path = glob('./test_images/*')
+for image in image_path:
+    predict_breed(im)
+```
+But this is giving me error on testing, saying the str object doesn't have load_img() function. After some digging, the problem happened with using image as a variable name, since in the former sections, we loaded the module like this
+```python
+from keras.preprocessing import image                  
+from tqdm import tqdm
+
+def path_to_tensor(img_path):
+    # loads RGB image as PIL.Image.Image type
+    img = image.load_img(img_path, target_size=(224, 224))
+    # convert PIL.Image.Image type to 3D tensor with shape (224, 224, 3)
+    x = image.img_to_array(img)
+    # convert 3D tensor to 4D tensor with shape (1, 224, 224, 3) and return 4D tensor
+    return np.expand_dims(x, axis=0)
+
+def paths_to_tensor(img_paths):
+    list_of_tensors = [path_to_tensor(img_path) for img_path in tqdm(img_paths)]
+    return np.vstack(list_of_tensors)
+```
+
+The loaded image was actually overwritten by the variable and caused the issue. This problem can be avoided by separating python modules in different files to avoid the global vs local naming, but since in a notebook, one has to take extra caution to avoid such scenario.
