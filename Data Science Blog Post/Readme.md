@@ -10,7 +10,7 @@ The blogpost is hosted on [medium](https://medium.com/@michael3770/crop-recommen
 
 ## Dependencies
 
-To run the notebook included in the reposotory, the following packages are required
+To run the notebook included in the repository, the following packages are required
 - python
 - matplotlib
 - seaborn
@@ -26,3 +26,11 @@ It's recommended to use conda to manage these packages
 - blogpost.md: actual blogpost file
 - crop_recommendation.ipynb: python notebook with data analysisi and visualization
 - crop_recommendation.csv: dataset
+
+## Acknowledgements
+
+Dataset - Singh, Raul, 2023, "Crop recommendation data", https://doi.org/10.7910/DVN/4GBWFV, Harvard Dataverse, V1
+
+License - [CC0 1.0](https://creativecommons.org/publicdomain/zero/1.0/)
+
+[Stablediffusion](https://stablediffusionweb.com/#demo) - Image generation

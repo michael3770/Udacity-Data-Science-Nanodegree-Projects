@@ -1,4 +1,7 @@
-### Data Scientist Blogpost - Crop Recommendation
+# Backyard Farm Crop Recommendation
+Applying CRISP-DM process to solve farming problem.
+
+![crops](./images/crop_pics.jfif)
 
 ## Introduction 
 
@@ -41,13 +44,10 @@ As seen above, the dataset include several growth conditions, including:
 
 And it gives a recommended crop type.
 
-We would like to take several steps to get some information about the dataset.
-```python
-import pandas as pd
-df = pd.read_csv('./Crop_recommendation.csv')
-print(df.head().to_markdown())
+First let's take a peek at the provided data, examine if there are missing values, and check the crop category counts. 
 
-```
+First 5 lines of the data -
+
 |    |   N |   P |   K |   temperature |   humidity |      ph |   rainfall | label   |
 |---:|----:|----:|----:|--------------:|-----------:|--------:|-----------:|:--------|
 |  0 |  90 |  42 |  43 |       20.8797 |    82.0027 | 6.50299 |    202.936 | rice    |
@@ -56,10 +56,8 @@ print(df.head().to_markdown())
 |  3 |  74 |  35 |  40 |       26.4911 |    80.1584 | 6.9804  |    242.864 | rice    |
 |  4 |  78 |  42 |  42 |       20.1302 |    81.6049 | 7.62847 |    262.717 | rice    |
 
-Let's take a look at are there any null values in the data set and how many examples does each label contains. 
-```python
-df.isnull().sum()
-```
+There does not seem to be missing values in the dataset.
+
 ```
 N              0
 P              0
@@ -69,13 +67,10 @@ humidity       0
 ph             0
 rainfall       0
 label          0
-dtype: int64
 ```
-```python
-df.groupby('label')['N'].count()
+The number of data in each crop category is also relatively balanced. 
 ```
-```
-label
+Crop
 Soyabeans     130
 apple         100
 banana        130
@@ -92,17 +87,14 @@ peas          100
 rice          139
 watermelon    100
 ```
-Seems the data publisher has already cleaned the data before uploading and the dataset doesn't have any missing values. The number of data in each crop category is also relatively balanced. 
+Seems the data publisher has already cleaned and formatted the data very well before publishing.
 
 ## Question 1 - What's the suitable growth condition for each crop in the dataset?
 
 There are 13 crops in the dataset, and we want to extract the growth growth condition statistics for each crop.  The plots in next session show the data is distributed pretty uniformly and there does not seem to be outliers. The only exception is rice/rainfall combination, so here I'll focus on the min and max only without discussing about other statical result too much.
 
-```python
-growth_condition = df.groupby('label').describe()
-minmax = growth_condition.drop(['count', 'mean', 'std', '25%', '50%', '75%'], axis=1, level=1)
-```
-| label      |   ('N', 'min') |   ('N', 'max') |   ('P', 'min') |   ('P', 'max') |   ('K', 'min') |   ('K', 'max') |   ('temperature', 'min') |   ('temperature', 'max') |   ('humidity', 'min') |   ('humidity', 'max') |   ('ph', 'min') |   ('ph', 'max') |   ('rainfall', 'min') |   ('rainfall', 'max') |
+
+| Crop      |   ('N', 'min') |   ('N', 'max') |   ('P', 'min') |   ('P', 'max') |   ('K', 'min') |   ('K', 'max') |   ('temperature', 'min') |   ('temperature', 'max') |   ('humidity', 'min') |   ('humidity', 'max') |   ('ph', 'min') |   ('ph', 'max') |   ('rainfall', 'min') |   ('rainfall', 'max') |
 |:-----------|---------------:|---------------:|---------------:|---------------:|---------------:|---------------:|-------------------------:|-------------------------:|----------------------:|----------------------:|----------------:|----------------:|----------------------:|----------------------:|
 | Soyabeans  |             20 |             60 |             55 |             80 |             75 |             85 |                 17.025   |                  21.195  |               14.258  |               20.1601 |         5.98899 |         8.86874 |              65.1137  |               95.7099 |
 | apple      |              0 |             40 |            120 |            145 |            195 |            205 |                 21.0365  |                  23.9969 |               90.0258 |               94.9205 |         5.51425 |         6.49923 |             100.117   |              124.983  |
